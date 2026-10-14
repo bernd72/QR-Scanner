@@ -1,5 +1,5 @@
 {
-  "name": "QR Scanner Offline",
+  "name": "QR & Data Matrix Scanner Offline",
   "short_name": "QR Scanner",
   "start_url": "./index.html",
   "display": "standalone",

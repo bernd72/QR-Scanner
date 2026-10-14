@@ -1,5 +1,5 @@
-const CACHE='qr-offline-v0.4';
-const ASSETS=['./index.html','./jsQR.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./icon-1024.png'];
+const CACHE='qr-offline-v0.5';
+const ASSETS=['./index.html','./zxing.min.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./icon-1024.png'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
 });

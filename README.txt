@@ -1,13 +1,10 @@
-QR Scanner V0.4 (14.10.2026)
+QR & Data Matrix Scanner V0.5
 
-Upload aller Dateien direkt ins Hauptverzeichnis des GitHub-Pages-Repositories.
-index.html, sw.js, jsQR.js, manifest.webmanifest und Icons zusammen hochladen.
+Alle Dateien in das Stammverzeichnis deines GitHub-Pages-Repositories hochladen.
+Aufruf: https://bernd72.github.io/qr-scanner/?v=05 (falls Repository qr-scanner heißt).
+Die Bibliothek zxing.min.js ist lokal enthalten. QR-Code und Data Matrix sind offline lesbar.
+Bei iOS muss der Kamerazugriff über HTTPS und mit Freigabe erfolgen.
+Wichtig: Teste zuerst die Webadresse in Safari und erst danach die installierte Home-Bildschirm-App.
+Der Verlauf (max. 10 Einträge) wird lokal im Browser gespeichert.
 
-Aufruf zum Testen: https://DEINNAME.github.io/DEINREPO/?v=04
-Die App zeigt unten QR Scanner · V0.4 an. Oben muss jsQR bereit · V0.4 stehen.
-
-Änderungen: Aktualisierungslogik des Service-Workers (online Netzwerk zuerst, offline Cache),
-Versionsabgleich nach Service-Worker-Update und Bildlade-Fallback für iOS.
-
-Kamera benötigt HTTPS. QR-Erkennung erfolgt lokal über jsQR.
-Scanliste wird lokal im Browser gespeichert. Löschen der Website-Daten entfernt auch Scans.
+Hinweis: Mehrere Codes können je nach Position und Bildqualität nicht immer vollständig erkannt werden.
