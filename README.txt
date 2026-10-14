@@ -1,9 +1,9 @@
-QR & Data Matrix Scanner V0.6
+QR & Data Matrix Scanner V0.7
 
-Alle Dateien im Hauptverzeichnis von GitHub Pages hochladen.
-Die App benötigt beim ersten Öffnen Internet für das Laden der Dateien, anschließend funktioniert sie offline.
-In Safari über Teilen → Zum Home-Bildschirm installieren.
+Auf GitHub Pages alle Dateien in das Hauptverzeichnis hochladen.
+Auf iOS in Safari öffnen, dann optional zum Home-Bildschirm hinzufügen.
+Nach dem ersten vollständigen Laden kann die App offline arbeiten.
 
-V0.6: Mehrstufige QR- und Data-Matrix-Erkennung, Erkennung aus Bildern in nativer Auflösung, automatische Skalierungsversuche und Randzone.
+V0.7: Bildbereichsuche in überlappenden Kacheln gegen kleine Data-Matrix-Codes in großen Fotos, Diagnose mit Versuchszahl, Cache V0.7.
 
-Hinweis: App auf iOS noch nicht hardwareseitig getestet.
+Hinweis: Browser-Kameratests auf iOS stehen aus.
