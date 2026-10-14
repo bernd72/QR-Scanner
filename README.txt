@@ -1,5 +1,13 @@
-QR Scanner V0.2 – vollständig lokale QR-Erkennung mit jsQR.js.
-Alle Dateien gemeinsam in das Stammverzeichnis des GitHub-Pages-Repositories hochladen.
-HTTPS ist für den Kamerazugriff erforderlich; die Erkennung funktioniert anschließend offline.
-Bei bestehenden Installationen die App nach dem Upload einmal online neu laden, damit der Offline-Cache aktualisiert wird.
-Mehrfacherkennung erfolgt durch wiederholtes Erkennen und Abdecken; dicht überlappende Codes werden eventuell nicht vollständig erkannt.
+QR Scanner V0.4 (14.10.2026)
+
+Upload aller Dateien direkt ins Hauptverzeichnis des GitHub-Pages-Repositories.
+index.html, sw.js, jsQR.js, manifest.webmanifest und Icons zusammen hochladen.
+
+Aufruf zum Testen: https://DEINNAME.github.io/DEINREPO/?v=04
+Die App zeigt unten QR Scanner · V0.4 an. Oben muss jsQR bereit · V0.4 stehen.
+
+Änderungen: Aktualisierungslogik des Service-Workers (online Netzwerk zuerst, offline Cache),
+Versionsabgleich nach Service-Worker-Update und Bildlade-Fallback für iOS.
+
+Kamera benötigt HTTPS. QR-Erkennung erfolgt lokal über jsQR.
+Scanliste wird lokal im Browser gespeichert. Löschen der Website-Daten entfernt auch Scans.
