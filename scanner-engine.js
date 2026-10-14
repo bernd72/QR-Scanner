@@ -76,7 +76,7 @@
     const camera = String(profile).startsWith('camera');
     const phase = camera ? (Number(String(profile).split('-')[1]) || 0) % 12 : 0;
     // Image: full native data first; Camera: brief work per frame to stay responsive.
-    const maxAttempts = camera ? 48 : profile === 'photo-target' ? 160 : 1750;
+    const maxAttempts = camera ? 52 : (profile === 'photo-target' || profile === 'photo-area') ? 280 : 1750;
     function probe(x, y, w, h, extra = false) {
       if (tries >= maxAttempts || results.length >= 10 || w < 24 || h < 24) return;
       const scale = Math.min(1, 2000 / Math.max(w, h));
@@ -91,6 +91,17 @@
       if (extra) {
         if (add(decodeOne(base, true, false))) return;
         if (tries >= maxAttempts) return;
+        // Larger Data Matrix symbols can exceed the decoder's preferred
+        // number of pixels per cell. Try genuinely smaller bitmaps too.
+        // Keep a white quiet zone even if the crop touches the symbol.
+        const sizes = [0.75, 0.5, 0.3, 0.16];
+        for (const k of sizes) {
+          if (tries >= maxAttempts || results.length) break;
+          if (Math.min(w,h)*k < 70) continue;
+          const item = region(gray,W,H,x,y,w,h,k,true,false);
+          if (item && add(decodeOne(item,false,false))) break;
+        }
+        if (results.length || tries >= maxAttempts) return;
         const upscale = Math.min(3, 950 / Math.max(w, h));
         if (upscale >= 1.25) {
           const enlarged = region(gray, W, H, x, y, w, h, upscale, true, false);
@@ -102,6 +113,10 @@
         if (tries < maxAttempts) {
           const padded = region(gray, W, H, x, y, w, h, scale, true, false);
           if (padded && add(decodeOne(padded, false, false))) return;
+        }
+        if (tries < maxAttempts && (profile === 'photo-target' || profile === 'photo-area')) {
+          const inverted=region(gray,W,H,x,y,w,h,Math.min(1,900/Math.max(w,h)),true,true);
+          if(inverted) add(decodeOne(inverted,false,false));
         }
       }
     }

@@ -1,11 +1,11 @@
-QR & DATA MATRIX SCANNER — V1.0
+QR & DATA MATRIX SCANNER — V1.1
 ================================
 
 INHALT
 - index.html: vollständige Bedienoberfläche
 - zxing.min.js: QR-/Data-Matrix-Bibliothek (lokal, offline)
 - scanner-engine.js und scan-worker.js: Bildauswertung
-- sw.js: Offline-Cache mit Versionskennung V1.0
+- sw.js: Offline-Cache mit Versionskennung V1.1
 - manifest.webmanifest und icon-*.png: iOS-/PWA-App-Icon
 
 INSTALLATION ÜBER GITHUB PAGES
@@ -14,9 +14,9 @@ INSTALLATION ÜBER GITHUB PAGES
    des bestehenden GitHub-Pages-Repositories hochladen.
 3. Alte Dateien gleichen Namens auf GitHub ersetzen.
 4. Im iPhone-Safari öffnen:
-   https://bernd72.github.io/qr-scanner/?v=10
+   https://bernd72.github.io/qr-scanner/?v=11
    (gilt nur, wenn der Repository-Name "qr-scanner" ist).
-5. Unten muss „QR & Data Matrix · V1.0“ erscheinen.
+5. Unten muss „QR & Data Matrix · V1.1“ erscheinen.
 6. Zum Home-Bildschirm: Safari > Teilen > Zum Home-Bildschirm.
 7. Zum ersten Laden/Update Internet nutzen, danach funktioniert die
    App samt QR-Erkennung offline. Kamera benötigt HTTPS/localhost.
@@ -28,7 +28,13 @@ BILD-SCAN
   tippen. Dadurch wird die laufende Vollbildsuche sofort abgebrochen
   und nur die Umgebung der angetippten Stelle untersucht.
 - +/−/Schieberegler oder Zwei-Finger-Geste vergrößern das Foto.
-- „Ausschnitt“ untersucht ausschließlich den sichtbaren Ausschnitt.
+- „Sichtbereich“ untersucht ausschließlich den sichtbaren Ausschnitt.
+- NEU: „Bereich markieren“ antippen, dann mit dem Finger ein Rechteck
+  um den Code ziehen und „Bereich scannen“ drücken. Dabei bitte
+  ringsherum etwas freien Rand mit auswählen.
+- Auch sehr große Codes können Probleme bereiten. In V1.1 versucht
+  der Decoder zusätzlich verkleinerte Auflösungen und einen hellen Rand.
+- „Markierung weg“ entfernt die Auswahl.
 - „Ganzes Bild“ wiederholt die automatische Suche.
 - Sehr kleine/unscharfe/angeschnittene Codes können trotz dieser
   Verbesserungen unerkannt bleiben. Originaldatei bevorzugen.
@@ -56,6 +62,6 @@ WICHTIG
   sie im untersuchten Bild findet; vollständige Mehrfacherkennung
   ist nicht garantiert.
 - Tests: JavaScript-Syntax, Node-Decoder mit Nutzermuster und
-  synthetischen Hochformatbildern, HTML-Oberfläche im Desktop-Chromium.
+  synthetischen Hochformatbildern, HTML-Oberfläche kann hier nicht erneut im Browser geprüft werden.
 - Keine realen Tests auf iOS-Hardware durchgeführt.
 - QR-Erkennung und Scan-Daten werden nicht an einen Server gesendet.

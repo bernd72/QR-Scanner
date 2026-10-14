@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="QR Scanner">
-<title>QR & Data Matrix Scanner · V1.0</title>
+<title>QR & Data Matrix Scanner · V1.1</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="icon" href="icon-192.png" type="image/png">
@@ -27,9 +27,11 @@ button:active{filter:brightness(1.18)}button:disabled{opacity:.45;cursor:default
 .hint{position:absolute;bottom:5px;left:6px;right:6px;padding:7px 9px;border-radius:8px;background:#0e1b30dc;z-index:3;text-align:center;font-size:12px;color:#ebf3ff;pointer-events:none;max-height:60px;overflow:hidden}
 .busy{display:none;position:absolute;top:7px;right:7px;padding:6px 9px;border-radius:7px;background:#243d61e6;font-size:12px;z-index:5}.busy.on{display:block}
 .focus{display:none;position:absolute;width:48px;height:48px;border:2px solid #17cfff;border-radius:8px;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 999px #0000;z-index:4}.focus.on{display:block}
+.selectionBox{display:none;position:absolute;border:2px solid #00dbff;background:#17baff22;z-index:4;pointer-events:none;border-radius:4px;box-shadow:0 0 0 1px #071b35}.selectionBox.on{display:block}
 .matchPanel{position:absolute;top:4px;left:4px;right:4px;z-index:6;display:none;max-height:52%;overflow:auto;background:#09172be9;border:1px solid #507ba7;padding:7px;border-radius:11px}.matchPanel.on{display:block}.matchPanel button{display:block;width:100%;text-align:left;margin:4px 0;font-size:14px;overflow-wrap:anywhere}
 .controls{flex:none;min-height:100px;display:flex;flex-direction:column;gap:5px}.controlRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.controlRow button{font-size:14px;white-space:nowrap;padding:8px 4px}
 .controlRow.photoRow button{font-size:13px}.controlRow.photoRowWide{grid-template-columns:1fr 1fr 1fr}
+.selectionRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.selectionRow button{font-size:13px;padding:7px 3px;min-height:39px}.selectionRow button.active{background:#126e9b;border-color:#37b9ec}
 .zoomBar{display:flex;align-items:center;gap:6px;height:45px;min-height:45px;background:#192942;border-radius:10px;padding:3px 6px}
 .zoomBar button{min-width:43px;height:43px}.zoomBar input{flex:1;min-width:0;accent-color:#1688ff;touch-action:pan-x}.zoomBar output{font-size:13px;min-width:37px;text-align:right}.zoomBar label{font-size:12px;white-space:nowrap}
 .controlInfo{flex:1;font-size:12px;color:#afc4dc;display:flex;align-items:center;justify-content:center;text-align:center;background:#17263c;border-radius:9px;min-height:45px;padding:7px}
@@ -49,7 +51,7 @@ button:active{filter:brightness(1.18)}button:disabled{opacity:.45;cursor:default
 <section class="viewer" id="viewer">
 <video id="video" playsinline muted></video>
 <canvas id="preview"></canvas>
-<div class="focus" id="focus"></div>
+<div class="focus" id="focus"></div><div class="selectionBox" id="selectionBox"></div>
 <div class="busy" id="busy">Untersuche Bild …</div>
 <div class="matchPanel" id="matches"></div>
 <div class="hint" id="hint">Kamera einschalten, dann Scan starten</div>
@@ -59,7 +61,8 @@ button:active{filter:brightness(1.18)}button:disabled{opacity:.45;cursor:default
   <div class="controlRow"><button id="cameraOn">Kamera ein</button><button id="startScan" class="primary">Scan starten</button><button id="nextScan">Weiter</button></div>
  </div>
  <div id="photoControls" hidden>
-  <div class="controlRow photoRow"><button id="pickPhoto" class="primary">Bild öffnen</button><button id="scanWhole">Ganzes Bild</button><button id="scanCrop">Ausschnitt</button></div>
+  <div class="controlRow photoRow"><button id="pickPhoto" class="primary">Bild öffnen</button><button id="scanWhole">Ganzes Bild</button><button id="scanCrop">Sichtbereich</button></div>
+  <div class="selectionRow"><button id="selectArea">Bereich markieren</button><button id="scanArea" disabled>Bereich scannen</button><button id="clearArea">Markierung weg</button></div>
  </div>
  <div class="zoomBar" id="zoomCamera"><button id="cameraMinus">−</button><label for="camRange">Zoom</label><input id="camRange" type="range" min="1" max="5" step="0.1" value="1"><button id="cameraPlus">+</button><output id="camValue">1,0×</output></div>
  <div class="zoomBar" id="zoomPhoto" hidden><button id="photoMinus">−</button><label for="photoRange">Foto</label><input id="photoRange" type="range" min="1" max="12" step="0.1" value="1"><button id="photoPlus">+</button><output id="photoValue">1,0×</output></div>
@@ -69,9 +72,9 @@ button:active{filter:brightness(1.18)}button:disabled{opacity:.45;cursor:default
 <div class="historyTop"><h2>Letzte Scans (<span id="count">0</span>/10)</h2><button id="clearHistory">Puffer löschen</button></div>
 <div class="entries" id="entries"></div>
 </section>
-<footer class="footer">QR &amp; Data Matrix · V1.0</footer>
+<footer class="footer">QR &amp; Data Matrix · V1.1</footer>
 </main>
-<script src="zxing.min.js?v=1.0"></script><script src="scanner-engine.js?v=1.0"></script>
+<script src="zxing.min.js?v=1.1"></script><script src="scanner-engine.js?v=1.1"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -79,7 +82,7 @@ const viewer=$('viewer'),canvas=$('preview'),ctx=canvas.getContext('2d',{willRea
 const buffer=document.createElement('canvas'),bctx=buffer.getContext('2d',{willReadFrequently:true});
 let mode='camera',cameraStream=null,scanning=false,locked=false,raf=0,lastFrame=0,frameCount=0;
 let photo=null,photoZoom=1,panX=0,panY=0,camZoom=1,points=new Map(),origins=new Map(),lastGap=0,photoLoadToken=0;
-let worker=null,jobId=0,job=null,epoch=0;let records=[],seq=0;
+let worker=null,jobId=0,job=null,epoch=0;let records=[],seq=0;let areaMode=false,selectedArea=null,areaStart=null;
 try{records=JSON.parse(localStorage.getItem('qrRecords')||'[]');if(!Array.isArray(records))records=[];seq=Number(localStorage.getItem('qrSeq')||0)}catch{}
 function status(s){$('status').textContent=s}
 function hint(s){$('hint').textContent=s}
@@ -100,7 +103,7 @@ function render(){
 render();
 function newWorker(){
  if(worker){worker.terminate();worker=null}
- worker=new Worker('./scan-worker.js?v=1.0');
+ worker=new Worker('./scan-worker.js?v=1.1');
  worker.onmessage=e=>{if(!job||e.data.id!==job.id)return;const f=job;job=null;busy(false);e.data.error?f.reject(Error(e.data.error)):f.resolve(e.data)};
  worker.onerror=e=>{if(!job)return;const f=job;job=null;busy(false);f.reject(Error('Worker: '+e.message))};
 }
@@ -122,10 +125,18 @@ function decode(source,profile){
 function measured(){const r=viewer.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);return {w:Math.max(1,Math.round(r.width*d)),h:Math.max(1,Math.round(r.height*d))}}
 function sizePreview(){const {w,h}=measured();if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}}
 function clearPreview(){sizePreview();ctx.clearRect(0,0,canvas.width,canvas.height)}
+function clearArea(){selectedArea=null;areaStart=null;areaMode=false;$('selectionBox').classList.remove('on');$('selectArea').classList.remove('active');$('scanArea').disabled=true}
+function photoCoords(px,py){const q=fitPhoto(),rect=canvas.getBoundingClientRect();const vx=(px-rect.left)*canvas.width/rect.width,vy=(py-rect.top)*canvas.height/rect.height;return {x:Math.max(0,Math.min(photo.width,(vx-q.l)/q.scale)),y:Math.max(0,Math.min(photo.height,(vy-q.t)/q.scale))}}
+function drawArea(){const el=$('selectionBox');if(!selectedArea||!photo||mode!=='photo'){el.classList.remove('on');return}
+ const q=fitPhoto(),r=canvas.getBoundingClientRect();const x=Math.max(0,q.l+selectedArea.x*q.scale),y=Math.max(0,q.t+selectedArea.y*q.scale);
+ const rx=Math.min(canvas.width,q.l+(selectedArea.x+selectedArea.w)*q.scale),ry=Math.min(canvas.height,q.t+(selectedArea.y+selectedArea.h)*q.scale);
+ el.style.left=(x/canvas.width*100)+'%';el.style.top=(y/canvas.height*100)+'%';el.style.width=(Math.max(0,rx-x)/canvas.width*100)+'%';el.style.height=(Math.max(0,ry-y)/canvas.height*100)+'%';el.classList.add('on')}
+function setArea(a,b){selectedArea={x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),w:Math.abs(a.x-b.x),h:Math.abs(a.y-b.y)};$('scanArea').disabled=selectedArea.w<12||selectedArea.h<12;drawArea()}
+
 function hideMatches(){$('matches').classList.remove('on');$('matches').replaceChildren()}
 function save(r){
  if(!r||!r.value)return;
- records.push({id:++seq,time:new Date().toLocaleString('de-DE'),value:r.value.replace(/[\r\n]+$/,''),format:r.format,note:''});records=records.slice(-10);persist();render();hideMatches();status('Code gespeichert · V1.0');hint('Gespeichert. Nächsten Code über „Weiter“ oder neues Foto scannen.');
+ records.push({id:++seq,time:new Date().toLocaleString('de-DE'),value:r.value.replace(/[\r\n]+$/,''),format:r.format,note:''});records=records.slice(-10);persist();render();hideMatches();status('Code gespeichert · V1.1');hint('Gespeichert. Nächsten Code über „Weiter“ oder neues Foto scannen.');
 }
 function showResults(res){
  if(!res||!res.length)return false;
@@ -144,7 +155,7 @@ async function openCamera(){
   if(!navigator.mediaDevices?.getUserMedia)throw Error('Für die Kamera ist HTTPS erforderlich');
   const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
   if(mode!=='camera'){stream.getTracks().forEach(t=>t.stop());return}
-  cameraStream=stream;video.srcObject=stream;await video.play();setCameraZoom(camZoom);status('Kamera bereit · V1.0');hint('Zoom einstellen, dann „Scan starten“ drücken');
+  cameraStream=stream;video.srcObject=stream;await video.play();setCameraZoom(camZoom);status('Kamera bereit · V1.1');hint('Zoom einstellen, dann „Scan starten“ drücken');
  }catch(e){status('Kamera nicht bereit');hint('Kamerafehler: '+e.message)}
 }
 function setCameraZoom(v){camZoom=Math.max(1,Math.min(5,Math.round(Number(v)*10)/10));$('camRange').value=String(camZoom);$('camValue').textContent=camZoom.toFixed(1).replace('.',',')+'×';video.style.transform='scale('+camZoom+')'}
@@ -168,7 +179,7 @@ async function cameraLoop(now){
   const r=await decode(s,'camera-'+(frameCount++%12));
   if(token!==epoch||!scanning||mode!=='camera')return;
   if(r.results?.length){locked=true;freezeCamera();showResults(r.results);return}
-  status('Suche läuft · V1.0');
+  status('Suche läuft · V1.1');
  }catch(e){if(token===epoch){hint(e.message);scanning=false}}
  if(scanning)raf=requestAnimationFrame(cameraLoop);
 }
@@ -179,7 +190,7 @@ function fitPhoto(){
 }
 function drawPhoto(){
  if(mode!=='photo')return;clearPreview();if(!photo)return;
- const q=fitPhoto();ctx.drawImage(photo,q.l,q.t,photo.width*q.scale,photo.height*q.scale);
+ const q=fitPhoto();ctx.drawImage(photo,q.l,q.t,photo.width*q.scale,photo.height*q.scale);drawArea();
 }
 function makeCrop(sx,sy,w,h,max=2200){
  const scale=Math.min(1,max/Math.max(w,h));
@@ -205,8 +216,24 @@ async function scanPhoto(whole,automatic=false){
  try{
   const r=await decode(src,'photo-fast');if(token!==epoch||mode!=='photo')return;
   if(showResults(r.results))return;
-  status('Kein Code gefunden · V1.0');hint('Code im Foto antippen oder hineinzoomen und „Ausschnitt“ wählen.');
- }catch(e){if(token===epoch){status('Bildfehler · V1.0');hint(e.message)}}
+  status('Kein Code gefunden · V1.1');hint('Falls kein Treffer: „Bereich markieren“ und den Code mit freiem Rand umrahmen.');
+ }catch(e){if(token===epoch){status('Bildfehler · V1.1');hint(e.message)}}
+}
+async function scanSelected(){
+ if(!photo||mode!=='photo'||!selectedArea||selectedArea.w<12||selectedArea.h<12)return;
+ abortDecode();hideMatches();const token=epoch;const a=selectedArea;
+ // Include ~12% of the marked size as a quiet zone on every side.
+ const mx=Math.max(10,a.w*.12),my=Math.max(10,a.h*.12);
+ const sx=Math.max(0,Math.floor(a.x-mx)),sy=Math.max(0,Math.floor(a.y-my));
+ const ex=Math.min(photo.width,Math.ceil(a.x+a.w+mx)),ey=Math.min(photo.height,Math.ceil(a.y+a.h+my));
+ const src=makeCrop(sx,sy,ex-sx,ey-sy,2600);
+ status('Scanne gewählten Bereich …');hint('Suche in '+Math.round(ex-sx)+' × '+Math.round(ey-sy)+' Pixeln …');
+ try{
+  const r=await decode(src,'photo-area');if(token!==epoch||mode!=='photo')return;
+  if(showResults(r.results)){clearArea();return}
+  status('Bereich: kein Code · V1.1');
+  hint('Kein Treffer nach '+(r.tries||0)+' Versuchen. Markiere den gesamten Code mit etwas freiem Rand.');
+ }catch(e){if(token===epoch){status('Bereich: Fehler');hint(e.message)}}
 }
 function photoPoint(px,py){
  const q=fitPhoto(),rect=canvas.getBoundingClientRect();
@@ -235,7 +262,7 @@ async function scanAt(px,py){
   }catch(e){if(token!==epoch)return;hint(e.message);break}
  }
  if(token!==epoch)return;
- status('Am Punkt kein Code · V1.0');hint('Noch kein Treffer. Bitte Bild vergrößern und genauer auf den Code tippen.');
+ status('Am Punkt kein Code · V1.1');hint('Noch kein Treffer. Bitte Bild vergrößern und genauer auf den Code tippen.');
  // Zoom around the tapped source point so a second tap can be more precise.
  if(photoZoom<2.2)setPhotoZoom(2.5,p.x,p.y);
 }
@@ -255,7 +282,7 @@ function setPhotoZoom(v,anchorX,anchorY){
  clampPan();$('photoRange').value=String(photoZoom);$('photoValue').textContent=photoZoom.toFixed(1).replace('.',',')+'×';drawPhoto();
 }
 async function pickPhoto(file){
- if(!file)return;abortDecode();hideMatches();$('focus').classList.remove('on');
+ if(!file)return;abortDecode();clearArea();hideMatches();$('focus').classList.remove('on');
  const loadId=++photoLoadToken;const old=photo;photo=null;
  if(old&&typeof old.close==='function')old.close();
  clearPreview();status('Bild wird geöffnet …');
@@ -266,17 +293,17 @@ async function pickPhoto(file){
   }
   if(mode!=='photo'||loadId!==photoLoadToken){if(typeof nextPhoto.close==='function')nextPhoto.close();return}
   photo=nextPhoto;
-  photoZoom=1;panX=0;panY=0;drawPhoto();status('Foto '+photo.width+'×'+photo.height+' · V1.0');
-  hint('Automatische Suche startet. Du kannst jederzeit den Code antippen.');
+  photoZoom=1;panX=0;panY=0;drawPhoto();status('Foto '+photo.width+'×'+photo.height+' · V1.1');
+  hint('Suche startet. Falls kein Treffer: „Bereich markieren“ und Rechteck um den Code ziehen.');
   scanPhoto(true,true);
  }catch(e){status('Fotofehler');hint('Bild konnte nicht geöffnet werden: '+e.message)}
 }
 function setMode(next){
- abortDecode();stopCamera();locked=false;mode=next;photoLoadToken++;if(photo&&typeof photo.close==='function')photo.close();photo=null;photoZoom=1;panX=panY=0;points.clear();origins.clear();$('focus').classList.remove('on');hideMatches();
+ abortDecode();stopCamera();clearArea();locked=false;mode=next;photoLoadToken++;if(photo&&typeof photo.close==='function')photo.close();photo=null;photoZoom=1;panX=panY=0;points.clear();origins.clear();$('focus').classList.remove('on');hideMatches();
  $('tabCamera').classList.toggle('selected',next==='camera');$('tabPhoto').classList.toggle('selected',next==='photo');
  $('cameraControls').hidden=next!=='camera';$('photoControls').hidden=next!=='photo';$('zoomCamera').hidden=next!=='camera';$('zoomPhoto').hidden=next!=='photo';
  viewer.classList.toggle('photo',next==='photo');video.style.display=next==='camera'?'block':'none';video.style.visibility='visible';clearPreview();
- hint(next==='camera'?'Kamera einschalten und „Scan starten“ drücken':'Foto öffnen. Zum Suchen auf den Code tippen oder vergrößern.');status('ZXing bereit · V1.0');
+ hint(next==='camera'?'Kamera einschalten und „Scan starten“ drücken':'Foto öffnen; danach bei Bedarf „Bereich markieren“ verwenden.');status('ZXing bereit · V1.1');
 }
 $('tabCamera').onclick=()=>setMode('camera');$('tabPhoto').onclick=()=>setMode('photo');
 $('cameraOn').onclick=openCamera;
@@ -288,21 +315,26 @@ $('nextScan').onclick=openCamera;
 $('cameraMinus').onclick=()=>setCameraZoom(camZoom-.5);$('cameraPlus').onclick=()=>setCameraZoom(camZoom+.5);$('camRange').oninput=e=>setCameraZoom(e.target.value);
 $('pickPhoto').onclick=()=>$('file').click();$('file').onchange=e=>{pickPhoto(e.target.files?.[0]);e.target.value=''};
 $('scanWhole').onclick=()=>scanPhoto(true);$('scanCrop').onclick=()=>scanPhoto(false);
+$('selectArea').onclick=()=>{if(!photo){hint('Bitte erst ein Bild öffnen.');return}abortDecode();areaMode=!areaMode;$('selectArea').classList.toggle('active',areaMode);hint(areaMode?'Mit dem Finger ein Rechteck um den Code ziehen – mit etwas freiem Rand.':'Markierung kann über „Bereich scannen“ untersucht werden.')};
+$('scanArea').onclick=scanSelected;$('clearArea').onclick=()=>{clearArea();hint('Markierung entfernt.')} ;
 $('photoMinus').onclick=()=>setPhotoZoom(photoZoom/1.6);$('photoPlus').onclick=()=>setPhotoZoom(photoZoom*1.6);$('photoRange').oninput=e=>setPhotoZoom(e.target.value);
 $('clearHistory').onclick=()=>{if(records.length&&confirm('Alle zehn bzw. alle vorhandenen Scans löschen?')){records=[];persist();render()}};
 canvas.addEventListener('pointerdown',e=>{
  if(mode!=='photo'||!photo)return;
  e.preventDefault();canvas.setPointerCapture(e.pointerId);points.set(e.pointerId,{x:e.clientX,y:e.clientY});origins.set(e.pointerId,{x:e.clientX,y:e.clientY,moved:false});
+ if(areaMode){abortDecode();areaStart=photoCoords(e.clientX,e.clientY);setArea(areaStart,areaStart)}
 });
 canvas.addEventListener('pointermove',e=>{
  if(!points.has(e.pointerId)||mode!=='photo'||!photo)return;
  e.preventDefault();const p=points.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;points.set(e.pointerId,{x:e.clientX,y:e.clientY});
  const orig=origins.get(e.pointerId);if(orig&&Math.hypot(e.clientX-orig.x,e.clientY-orig.y)>8)orig.moved=true;
+ if(areaMode&&areaStart){setArea(areaStart,photoCoords(e.clientX,e.clientY));return}
  if(points.size===1){const rect=canvas.getBoundingClientRect();panX+=dx*canvas.width/rect.width;panY+=dy*canvas.height/rect.height;clampPan();drawPhoto()}
  else if(points.size===2){const arr=[...points.values()],gap=Math.hypot(arr[0].x-arr[1].x,arr[0].y-arr[1].y);if(lastGap>0){setPhotoZoom(photoZoom*gap/lastGap);for(const o of origins.values())o.moved=true}lastGap=gap}
 });
 for(const t of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(t,e=>{
  const orig=origins.get(e.pointerId);const tap=t==='pointerup'&&orig&&!orig.moved&&points.size===1;
+ if(areaMode&&areaStart){if(t==='pointerup')setArea(areaStart,photoCoords(e.clientX,e.clientY));areaStart=null;points.delete(e.pointerId);origins.delete(e.pointerId);hint(selectedArea?.w>=12&&selectedArea?.h>=12?'Jetzt „Bereich scannen“ drücken.':'Mit dem Finger ein größeres Rechteck um den Code ziehen.');return}
  points.delete(e.pointerId);origins.delete(e.pointerId);if(points.size<2)lastGap=0;
  if(tap)scanAt(e.clientX,e.clientY);
 });
@@ -310,11 +342,11 @@ canvas.addEventListener('wheel',e=>{if(mode==='photo'&&photo){e.preventDefault()
 window.addEventListener('resize',()=>{if(mode==='photo')drawPhoto();else if(!cameraStream)clearPreview()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&cameraStream){stopCamera();hint('Kamera gestoppt. Erneut einschalten.')}});
 if('serviceWorker'in navigator&&location.protocol!=='file:'){
- const key='qr-v10-updated';let previouslyControlled=!!navigator.serviceWorker.controller;
+ const key='qr-v11-updated';let previouslyControlled=!!navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(previouslyControlled&&!sessionStorage.getItem(key)){sessionStorage.setItem(key,'yes');location.reload()}});
- navigator.serviceWorker.register('./sw.js?v=1.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
+ navigator.serviceWorker.register('./sw.js?v=1.1',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
 }
-setCameraZoom(1);status(typeof ScannerEngine==='object'?'ZXing bereit · V1.0':'Decoder fehlt · V1.0');
+setCameraZoom(1);status(typeof ScannerEngine==='object'?'ZXing bereit · V1.1':'Decoder fehlt · V1.1');
 </script>
 </body>
 </html>
