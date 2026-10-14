@@ -1,41 +1,61 @@
-QR & Data Matrix Scanner V0.9
+QR & DATA MATRIX SCANNER — V1.0
 ================================
 
-INSTALLATION
-1. ALLE Dateien aus diesem ZIP entpacken und im Hauptverzeichnis
-   deines GitHub-Pages-Repositories hochladen (vorhandene Dateien ersetzen).
-2. Im iPhone-Safari öffnen: https://bernd72.github.io/qr-scanner/?v=09
-3. Wenn unten V0.9 erscheint, ist die neue Version geladen.
-4. Optional in Safari: Teilen > Zum Home-Bildschirm.
-5. Nach dem ersten vollständigen Online-Aufruf offline nutzbar.
+INHALT
+- index.html: vollständige Bedienoberfläche
+- zxing.min.js: QR-/Data-Matrix-Bibliothek (lokal, offline)
+- scanner-engine.js und scan-worker.js: Bildauswertung
+- sw.js: Offline-Cache mit Versionskennung V1.0
+- manifest.webmanifest und icon-*.png: iOS-/PWA-App-Icon
+
+INSTALLATION ÜBER GITHUB PAGES
+1. ZIP entpacken.
+2. ALLE Dateien ohne übergeordneten Ordner in das Hauptverzeichnis
+   des bestehenden GitHub-Pages-Repositories hochladen.
+3. Alte Dateien gleichen Namens auf GitHub ersetzen.
+4. Im iPhone-Safari öffnen:
+   https://bernd72.github.io/qr-scanner/?v=10
+   (gilt nur, wenn der Repository-Name "qr-scanner" ist).
+5. Unten muss „QR & Data Matrix · V1.0“ erscheinen.
+6. Zum Home-Bildschirm: Safari > Teilen > Zum Home-Bildschirm.
+7. Zum ersten Laden/Update Internet nutzen, danach funktioniert die
+   App samt QR-Erkennung offline. Kamera benötigt HTTPS/localhost.
+
+BILD-SCAN
+- „Bild auswählen“ > „Bild öffnen“.
+- Der automatische Scan läuft im Hintergrund.
+- Wenn kein Treffer gefunden wird: MIT DEM FINGER GENAU auf den Code
+  tippen. Dadurch wird die laufende Vollbildsuche sofort abgebrochen
+  und nur die Umgebung der angetippten Stelle untersucht.
+- +/−/Schieberegler oder Zwei-Finger-Geste vergrößern das Foto.
+- „Ausschnitt“ untersucht ausschließlich den sichtbaren Ausschnitt.
+- „Ganzes Bild“ wiederholt die automatische Suche.
+- Sehr kleine/unscharfe/angeschnittene Codes können trotz dieser
+  Verbesserungen unerkannt bleiben. Originaldatei bevorzugen.
 
 KAMERA
-- „Kamera einschalten“, Zoom per +/- oder Schieberegler auf 1–5×,
-  dann „Scan starten“. Bei erfolgreichem Treffer friert das Bild ein.
-- Der Kamera-Zoom ist ein digitaler Bildausschnitt und funktioniert auch
-  auf Geräten ohne Hardwarezoom. Er verbessert jedoch keine unscharfen Bilder.
-- „Weiter“ ermöglicht den nächsten Scan.
+- „Kamera ein“, ggf. Zoom mit Slider von 1× bis 5×,
+  anschließend „Scan starten“.
+- Nach einem Treffer friert das Bild ein. „Weiter“ öffnet die Kamera
+  für einen neuen Scan.
+- Der Kamera-Zoom ist digital, kein optischer Zoom.
 
-FOTO
-- „Bild auswählen“ > „Bild öffnen“. Automatische Vollbildsuche beginnt.
-- Falls kein Code gefunden wird: Direkt auf die Mitte des Codes tippen;
-  die App prüft dann mehrere hochaufgelöste Ausschnitte an der Stelle.
-- Alternativ mit zwei Fingern zoomen/verschieben (oder +/-) und
-  „Ausschnitt scannen“ benutzen. „Ganzes Bild“ startet die Vollsuche.
-- Manche sehr kleinen, unscharfen oder angeschnittenen Symbole bleiben
-  möglicherweise unerkennbar.
+DATEN UND ANZEIGE
+- Bis zu zehn letzte Scans: fortlaufende ID, Uhrzeit, Inhalt,
+  Typ (QR-Code oder Data Matrix), Bemerkung.
+- Einträge werden lokal im Browser gespeichert.
+- „Puffer löschen“ entfernt die letzten Scans nach Rückfrage.
+- Bedienoberfläche ist im Hochformat stabil angeordnet, die
+  Buttons haben große Tippflächen; Bemerkungsfelder sind mit
+  16-px-Schrift gegen unerwünschtes Safari-Zoomen ausgelegt.
+- Auf Smartphone/Tablet im Querformat erscheint ein Drehhinweis.
 
-DATEN
-Letzte 10 Scans mit fortlaufender ID, Uhrzeit, Wert und Bemerkungsfeld.
-Die Daten verbleiben ausschließlich lokal auf dem Gerät.
-„Alle löschen“ leert den Ringpuffer nach Bestätigung.
-
-NEU IN V0.9
-- Stufenloser Digitalzoom in der Kamera (1–5×), auch für den Scanbereich.
-- Automatisches Scannen nach dem Öffnen eines Bildes.
-- Gezielter Scan durch Antippen der Codemitte im Originalbild.
-- Änderung der Reihenfolge der Suchfenster für kleine Data-Matrix-Codes.
-- Eigener Service-Worker-Cache und konsistente V0.9-Angaben.
-
-HINWEIS: HTTPS ist für Kamerazugriff auf iOS erforderlich.
-Browser-/Kameratests auf einem echten iPhone stehen noch aus.
+WICHTIG
+- Die Bibliothek erkennt Data Matrix und klassische QR-Codes.
+- Mehrere Codes können ausgewählt werden, sofern der Decoder
+  sie im untersuchten Bild findet; vollständige Mehrfacherkennung
+  ist nicht garantiert.
+- Tests: JavaScript-Syntax, Node-Decoder mit Nutzermuster und
+  synthetischen Hochformatbildern, HTML-Oberfläche im Desktop-Chromium.
+- Keine realen Tests auf iOS-Hardware durchgeführt.
+- QR-Erkennung und Scan-Daten werden nicht an einen Server gesendet.

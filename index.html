@@ -2,281 +2,319 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#101827">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c1524">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="QR Scanner">
-<title>QR & Data Matrix Scanner V0.9</title>
+<title>QR & Data Matrix Scanner · V1.0</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="icon" href="icon-192.png" type="image/png">
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{background:#101827;color:#f2f6fc;font:15px system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{border:0;border-radius:10px;background:#33435e;color:#fff;padding:10px 9px;font-weight:600;min-height:40px}button.primary,.modes button.selected{background:#3078e6}button:disabled{opacity:.45}.app{height:100vh;height:100dvh;display:flex;flex-direction:column;gap:8px;padding:calc(env(safe-area-inset-top) + 8px) 11px calc(env(safe-area-inset-bottom) + 7px);max-width:650px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;gap:8px}h1{font-size:19px;margin:0}#status{font-size:11px;text-align:right;color:#b9cdeb;overflow-wrap:anywhere;max-width:63%}.modes,.toolbar{display:flex;gap:7px}.modes button{flex:1}.toolbar{flex-wrap:wrap}.toolbar button{flex:1 1 auto;white-space:nowrap;font-size:13px}.toolbar [hidden]{display:none}.viewer{position:relative;flex:1;min-height:110px;overflow:hidden;border:1px solid #42536e;border-radius:13px;background:#050910;touch-action:none}#video,#canvas{width:100%;height:100%;position:absolute;inset:0;object-fit:contain;display:block}#canvas{pointer-events:auto;touch-action:none}#video{z-index:0}#canvas{z-index:1}.hint{position:absolute;bottom:7px;left:7px;right:7px;background:#111c30d8;border-radius:7px;padding:7px;text-align:center;font-size:12px;pointer-events:none;z-index:2}.busy{display:none;position:absolute;top:8px;right:8px;background:#253e68dd;border-radius:7px;padding:5px 8px;font-size:12px;z-index:2}.busy.visible{display:block}.results{display:none;max-height:114px;overflow:auto;border:1px solid #4b5b75;border-radius:9px;padding:5px}.results button{display:block;text-align:left;width:100%;margin:3px 0;overflow-wrap:anywhere}.history{height:29%;min-height:142px;display:flex;flex-direction:column;gap:5px}.historyHead{display:flex;align-items:center;justify-content:space-between}.historyHead h2{font-size:14px;margin:0}.historyHead button{background:#793a44;padding:5px 10px;min-height:32px;font-size:12px}.entries{overflow:auto;flex:1;border:1px solid #34445d;border-radius:9px}.entry{display:grid;gap:4px;padding:7px;border-bottom:1px solid #33435e}.meta{display:flex;gap:8px;justify-content:space-between;color:#becde0;font-size:12px}.payload{font-size:13px;overflow-wrap:anywhere}.entry input{width:100%;background:#202d43;border:1px solid #455672;border-radius:6px;color:#fff;padding:6px;font-size:13px}.empty{padding:15px;text-align:center;color:#a9bad1}.versionFooter{text-align:center;font-size:11px;color:#8fa2bd;flex-shrink:0}.cameraZoom{display:flex;align-items:center;gap:7px;background:#1b283e;border-radius:9px;padding:5px 7px}.cameraZoom label{font-size:12px;white-space:nowrap}.cameraZoom input{flex:1;min-width:45px;accent-color:#3988ff}.cameraZoom output{font-size:12px;min-width:34px;text-align:right;white-space:nowrap}.cameraZoom button{width:33px;min-height:31px;padding:3px}.cameraZoom[hidden]{display:none}.landscape{display:none}@media(orientation:landscape) and (pointer:coarse){.app{display:none}.landscape{height:100dvh;display:grid;place-items:center;padding:20px;text-align:center;font-size:19px}}@media(max-height:690px) and (orientation:portrait){.app{gap:5px}.history{height:27%;min-height:110px}.toolbar button{padding:6px 8px;min-height:33px}.modes button{min-height:34px}.hint{font-size:11px;padding:5px}}
+:root{color-scheme:dark;--bg:#0c1524;--panel:#142238;--line:#344763;--text:#f2f7ff;--muted:#a7b9d2;--blue:#187dff}
+*{box-sizing:border-box}html{height:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%;overscroll-behavior:none}
+body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text);font:15px/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overscroll-behavior:none}
+button,input{font-family:inherit;font-size:16px}button{appearance:none;-webkit-appearance:none;min-height:44px;border:1px solid #3d526f;border-radius:10px;color:var(--text);background:#263a56;font-weight:600;padding:8px 9px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer}
+button:active{filter:brightness(1.18)}button:disabled{opacity:.45;cursor:default}.primary,.selected{background:#1478ed!important;border-color:#258aff!important}
+[hidden]{display:none!important}
+.app{width:min(100%,620px);height:100vh;height:100svh;max-height:100svh;padding:calc(env(safe-area-inset-top) + 6px) 10px calc(env(safe-area-inset-bottom) + 4px);display:flex;flex-direction:column;gap:6px;margin:0 auto;overflow:hidden;contain:layout}
+.header{height:29px;min-height:29px;display:flex;align-items:center;justify-content:space-between;gap:6px}.header h1{margin:0;font-size:19px;letter-spacing:-.3px;white-space:nowrap}.status{font-size:11px;color:#b2c8e5;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tabs{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:7px}.tabs button{min-height:43px}
+.viewer{position:relative;flex:1 1 0;min-height:115px;border-radius:13px;overflow:hidden;border:1px solid #3c506d;background:#040914;touch-action:none}
+#video,#preview{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain}#video{z-index:0}#preview{z-index:1;touch-action:none;pointer-events:none}#viewer.photo #preview{pointer-events:auto}
+#video{transform-origin:center;pointer-events:none}
+.hint{position:absolute;bottom:5px;left:6px;right:6px;padding:7px 9px;border-radius:8px;background:#0e1b30dc;z-index:3;text-align:center;font-size:12px;color:#ebf3ff;pointer-events:none;max-height:60px;overflow:hidden}
+.busy{display:none;position:absolute;top:7px;right:7px;padding:6px 9px;border-radius:7px;background:#243d61e6;font-size:12px;z-index:5}.busy.on{display:block}
+.focus{display:none;position:absolute;width:48px;height:48px;border:2px solid #17cfff;border-radius:8px;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 999px #0000;z-index:4}.focus.on{display:block}
+.matchPanel{position:absolute;top:4px;left:4px;right:4px;z-index:6;display:none;max-height:52%;overflow:auto;background:#09172be9;border:1px solid #507ba7;padding:7px;border-radius:11px}.matchPanel.on{display:block}.matchPanel button{display:block;width:100%;text-align:left;margin:4px 0;font-size:14px;overflow-wrap:anywhere}
+.controls{flex:none;min-height:100px;display:flex;flex-direction:column;gap:5px}.controlRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.controlRow button{font-size:14px;white-space:nowrap;padding:8px 4px}
+.controlRow.photoRow button{font-size:13px}.controlRow.photoRowWide{grid-template-columns:1fr 1fr 1fr}
+.zoomBar{display:flex;align-items:center;gap:6px;height:45px;min-height:45px;background:#192942;border-radius:10px;padding:3px 6px}
+.zoomBar button{min-width:43px;height:43px}.zoomBar input{flex:1;min-width:0;accent-color:#1688ff;touch-action:pan-x}.zoomBar output{font-size:13px;min-width:37px;text-align:right}.zoomBar label{font-size:12px;white-space:nowrap}
+.controlInfo{flex:1;font-size:12px;color:#afc4dc;display:flex;align-items:center;justify-content:center;text-align:center;background:#17263c;border-radius:9px;min-height:45px;padding:7px}
+.history{flex:0 0 27%;min-height:120px;display:flex;flex-direction:column;gap:3px;min-width:0}.historyTop{display:flex;align-items:center;justify-content:space-between;flex:none;min-height:34px}.historyTop h2{font-size:14px;margin:0}.historyTop button{min-height:33px;padding:4px 8px;font-size:13px;background:#763842}
+.entries{flex:1;overflow:auto;overscroll-behavior:contain;background:#122037;border:1px solid var(--line);border-radius:9px}.entry{padding:7px;border-bottom:1px solid #304057;display:grid;gap:5px}.entry:last-child{border-bottom:0}.entryMeta{color:#b3c4df;font-size:12px}.entryValue{overflow-wrap:anywhere;font-size:13px}.entry input{width:100%;height:40px;min-height:40px;background:#1a2c46;color:#fff;border:1px solid #4b6182;border-radius:7px;padding:6px 9px;font-size:16px}.empty{padding:12px;text-align:center;color:var(--muted)}
+.footer{flex:none;height:15px;font-size:11px;color:#91a4bd;text-align:center}
+.rotate{display:none}
+@media(orientation:landscape) and (pointer:coarse){.app{display:none}.rotate{display:grid;height:100svh;place-items:center;text-align:center;padding:24px;font-size:20px}}
+@media(max-height:660px) and (orientation:portrait){.app{gap:4px;padding-top:calc(env(safe-area-inset-top) + 3px)}.controls{min-height:96px}.history{flex-basis:25%;min-height:106px}.hint{font-size:11px;padding:4px}.tabs button{min-height:40px}.controlRow button{min-height:40px}.zoomBar{height:42px;min-height:42px}.zoomBar button{height:40px;min-height:40px}}
 </style>
 </head>
 <body>
-<div class="landscape">Bitte das Gerät ins Hochformat drehen.</div>
-<main class="app">
-<header><h1>QR Scanner</h1><small id="status">Starte Erkennung …</small></header>
-<div class="modes"><button id="cameraMode" class="selected">Kamera</button><button id="imageMode">Bild auswählen</button></div>
-<div class="viewer" id="viewer">
+<div class="rotate">Bitte das Gerät ins Hochformat drehen.</div>
+<main class="app" id="app">
+<header class="header"><h1>QR Scanner</h1><span class="status" id="status">Erkennung startet …</span></header>
+<nav class="tabs"><button id="tabCamera" class="selected">Kamera</button><button id="tabPhoto">Bild auswählen</button></nav>
+<section class="viewer" id="viewer">
 <video id="video" playsinline muted></video>
-<canvas id="canvas"></canvas>
-<div id="busy" class="busy">Prüfe Bild …</div>
-<div class="hint" id="hint">Kamera einschalten und „Scan starten“ drücken</div>
-</div>
-<div class="toolbar">
-<button id="openCamera">Kamera einschalten</button><button class="primary" id="scan">Scan starten</button><button id="reset">Weiter</button>
-<button id="chooseImage" hidden>Bild öffnen</button><button id="scanWhole" hidden>Ganzes Bild</button><button class="primary" id="analyze" hidden>Ausschnitt scannen</button><button id="zoomOut" hidden>−</button><button id="zoomIn" hidden>＋</button><button id="resetZoom" hidden>1:1</button>
-</div>
-<div class="cameraZoom" id="cameraZoomBar">
-  <button id="camZoomMinus" aria-label="Kamera verkleinern">−</button>
-  <label for="camZoom">Kamera-Zoom</label>
-  <input id="camZoom" type="range" min="1" max="5" step="0.1" value="1" aria-label="Kamera-Zoom">
-  <button id="camZoomPlus" aria-label="Kamera vergrößern">＋</button>
-  <output id="camZoomVal" for="camZoom">1,0×</output>
-</div>
+<canvas id="preview"></canvas>
+<div class="focus" id="focus"></div>
+<div class="busy" id="busy">Untersuche Bild …</div>
+<div class="matchPanel" id="matches"></div>
+<div class="hint" id="hint">Kamera einschalten, dann Scan starten</div>
+</section>
+<section class="controls">
+ <div id="cameraControls">
+  <div class="controlRow"><button id="cameraOn">Kamera ein</button><button id="startScan" class="primary">Scan starten</button><button id="nextScan">Weiter</button></div>
+ </div>
+ <div id="photoControls" hidden>
+  <div class="controlRow photoRow"><button id="pickPhoto" class="primary">Bild öffnen</button><button id="scanWhole">Ganzes Bild</button><button id="scanCrop">Ausschnitt</button></div>
+ </div>
+ <div class="zoomBar" id="zoomCamera"><button id="cameraMinus">−</button><label for="camRange">Zoom</label><input id="camRange" type="range" min="1" max="5" step="0.1" value="1"><button id="cameraPlus">+</button><output id="camValue">1,0×</output></div>
+ <div class="zoomBar" id="zoomPhoto" hidden><button id="photoMinus">−</button><label for="photoRange">Foto</label><input id="photoRange" type="range" min="1" max="12" step="0.1" value="1"><button id="photoPlus">+</button><output id="photoValue">1,0×</output></div>
+</section>
 <input id="file" type="file" accept="image/*" hidden>
-<div class="results" id="results"></div>
-<section class="history"><div class="historyHead"><h2>Letzte Scans (<span id="count">0</span>/10)</h2><button id="clear">Alle löschen</button></div><div class="entries" id="entries"></div></section>
-<footer class="versionFooter">QR & Data Matrix · V0.9</footer>
+<section class="history">
+<div class="historyTop"><h2>Letzte Scans (<span id="count">0</span>/10)</h2><button id="clearHistory">Puffer löschen</button></div>
+<div class="entries" id="entries"></div>
+</section>
+<footer class="footer">QR &amp; Data Matrix · V1.0</footer>
 </main>
-<script src="zxing.min.js?v=0.9"></script>
-<script src="scanner-engine.js?v=0.9"></script>
+<script src="zxing.min.js?v=1.0"></script><script src="scanner-engine.js?v=1.0"></script>
 <script>
 'use strict';
-const $ = id => document.getElementById(id);
-const viewer=$('viewer'),canvas=$('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true}),video=$('video');
-const workCanvas=document.createElement('canvas'),workCtx=workCanvas.getContext('2d',{willReadFrequently:true});
-const VERSION='V0.9';
-let cameraScanCount=0;let stream=null,mode='camera',scanning=false,locked=false,frame=0,previousFrame=0,workerBusy=false,busyCount=0;
-let image=null,zoom=1,panX=0,panY=0,gesture=new Map(),lastPinch=0,pointerOrigin=new Map();
-let cameraZoom=1, imageToken=0;
-let seq=0,records=[];
-try{records=JSON.parse(localStorage.getItem('qrRecords')||'[]');seq=Number(localStorage.getItem('qrSeq')||0);if(!Array.isArray(records))records=[]}catch(err){records=[]}
-let worker=null,taskNumber=0,taskWait=new Map(),generation=0;
-function setStatus(s){$('status').textContent=s}function setHint(s){$('hint').textContent=s}
-function setBusy(v){$('busy').classList.toggle('visible',v);$('analyze').disabled=v;$('scanWhole').disabled=v}
-function persist(){try{localStorage.setItem('qrRecords',JSON.stringify(records));localStorage.setItem('qrSeq',String(seq))}catch(err){setStatus('Speichern nicht möglich · '+VERSION)}}
-function renderHistory(){
- $('count').textContent=records.length;const target=$('entries');target.replaceChildren();
- if(!records.length){const el=document.createElement('div');el.className='empty';el.textContent='Noch keine Scans';target.append(el);return}
+const $=id=>document.getElementById(id);
+const viewer=$('viewer'),canvas=$('preview'),ctx=canvas.getContext('2d',{willReadFrequently:true}),video=$('video');
+const buffer=document.createElement('canvas'),bctx=buffer.getContext('2d',{willReadFrequently:true});
+let mode='camera',cameraStream=null,scanning=false,locked=false,raf=0,lastFrame=0,frameCount=0;
+let photo=null,photoZoom=1,panX=0,panY=0,camZoom=1,points=new Map(),origins=new Map(),lastGap=0,photoLoadToken=0;
+let worker=null,jobId=0,job=null,epoch=0;let records=[],seq=0;
+try{records=JSON.parse(localStorage.getItem('qrRecords')||'[]');if(!Array.isArray(records))records=[];seq=Number(localStorage.getItem('qrSeq')||0)}catch{}
+function status(s){$('status').textContent=s}
+function hint(s){$('hint').textContent=s}
+function busy(on){$('busy').classList.toggle('on',on)}
+function persist(){try{localStorage.setItem('qrRecords',JSON.stringify(records));localStorage.setItem('qrSeq',String(seq))}catch{status('Speichern nicht möglich')}}
+function render(){
+ $('count').textContent=records.length;const list=$('entries');list.replaceChildren();
+ if(!records.length){const e=document.createElement('div');e.className='empty';e.textContent='Noch keine Scans';list.append(e);return}
  for(const rec of [...records].reverse()){
-  const e=document.createElement('div');e.className='entry';
-  const meta=document.createElement('div');meta.className='meta';meta.textContent='#'+rec.id+' · '+rec.time+(rec.format?' · '+rec.format:'');
-  const payload=document.createElement('div');payload.className='payload';payload.textContent=rec.value;
-  const note=document.createElement('input');note.placeholder='Bemerkung';note.value=rec.note||'';note.addEventListener('input',()=>{rec.note=note.value;persist()});
-  e.append(meta,payload,note);target.append(e);
+  const row=document.createElement('div');row.className='entry';
+  const meta=document.createElement('div');meta.className='entryMeta';meta.textContent='#'+rec.id+' · '+rec.time+' · '+(rec.format||'Code');
+  const val=document.createElement('div');val.className='entryValue';val.textContent=rec.value;
+  const note=document.createElement('input');note.type='text';note.placeholder='Bemerkung';note.value=rec.note||'';
+  note.addEventListener('input',()=>{rec.note=note.value;persist()});
+  row.append(meta,val,note);list.append(row);
  }
 }
-renderHistory();
-function initWorker(){
+render();
+function newWorker(){
+ if(worker){worker.terminate();worker=null}
+ worker=new Worker('./scan-worker.js?v=1.0');
+ worker.onmessage=e=>{if(!job||e.data.id!==job.id)return;const f=job;job=null;busy(false);e.data.error?f.reject(Error(e.data.error)):f.resolve(e.data)};
+ worker.onerror=e=>{if(!job)return;const f=job;job=null;busy(false);f.reject(Error('Worker: '+e.message))};
+}
+try{newWorker()}catch(e){status('Worker nicht verfügbar')}
+function abortDecode(){
+ epoch++;
+ if(job){job.reject(Error('abgebrochen'));job=null;busy(false)}
+ if(worker){try{newWorker()}catch(e){worker=null}}
+}
+function decode(source,profile){
+ if(!worker)return Promise.reject(Error('Offline-Decoder konnte nicht gestartet werden'));
+ if(job)return Promise.reject(Error('Decoder beschäftigt'));
+ const w=source.width,h=source.height;const rgba=source.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h);
+ busy(true);const id=++jobId;
+ return new Promise((resolve,reject)=>{
+  job={id,resolve,reject};worker.postMessage({id,width:w,height:h,profile,data:rgba.data.buffer},[rgba.data.buffer]);
+ });
+}
+function measured(){const r=viewer.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);return {w:Math.max(1,Math.round(r.width*d)),h:Math.max(1,Math.round(r.height*d))}}
+function sizePreview(){const {w,h}=measured();if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}}
+function clearPreview(){sizePreview();ctx.clearRect(0,0,canvas.width,canvas.height)}
+function hideMatches(){$('matches').classList.remove('on');$('matches').replaceChildren()}
+function save(r){
+ if(!r||!r.value)return;
+ records.push({id:++seq,time:new Date().toLocaleString('de-DE'),value:r.value.replace(/[\r\n]+$/,''),format:r.format,note:''});records=records.slice(-10);persist();render();hideMatches();status('Code gespeichert · V1.0');hint('Gespeichert. Nächsten Code über „Weiter“ oder neues Foto scannen.');
+}
+function showResults(res){
+ if(!res||!res.length)return false;
+ hideMatches();if(res.length===1){save(res[0]);return true}
+ const p=$('matches');p.classList.add('on');const t=document.createElement('div');t.textContent=res.length+' Codes gefunden – bitte auswählen:';p.append(t);
+ for(const [i,r] of res.entries()){
+  const btn=document.createElement('button');btn.textContent=(i+1)+'. '+r.format+' · '+r.value.slice(0,110);btn.onclick=()=>save(r);p.append(btn);
+ }
+ hint('Mehrere Codes erkannt. Bitte einen auswählen.');return true;
+}
+function stopCamera(){scanning=false;cancelAnimationFrame(raf);if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}video.srcObject=null}
+async function openCamera(){
+ stopCamera();abortDecode();locked=false;video.style.visibility='visible';clearPreview();
+ hint('Kamera wird geöffnet …');status('Öffne Kamera …');
  try{
-  worker=new Worker('./scan-worker.js?v=0.9');
-  worker.onmessage=e=>{const t=taskWait.get(e.data.id);if(!t)return;taskWait.delete(e.data.id);e.data.error?t.reject(new Error(e.data.error)):t.resolve(e.data)};
-  worker.onerror=e=>{for(const task of taskWait.values())task.reject(new Error('Decoder-Worker: '+e.message));taskWait.clear();worker.terminate();worker=null;setStatus('Lokaler Decoder aktiv · '+VERSION)};
- }catch(err){worker=null}
+  if(!navigator.mediaDevices?.getUserMedia)throw Error('Für die Kamera ist HTTPS erforderlich');
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+  if(mode!=='camera'){stream.getTracks().forEach(t=>t.stop());return}
+  cameraStream=stream;video.srcObject=stream;await video.play();setCameraZoom(camZoom);status('Kamera bereit · V1.0');hint('Zoom einstellen, dann „Scan starten“ drücken');
+ }catch(e){status('Kamera nicht bereit');hint('Kamerafehler: '+e.message)}
 }
-initWorker();
-function decodeCurrent(source,profile){
- const W=source.width,H=source.height;const pixels=source.getContext('2d',{willReadFrequently:true}).getImageData(0,0,W,H);
- if(!worker){return new Promise((resolve,reject)=>{setTimeout(()=>{try{resolve(ScannerEngine.scan(pixels.data,W,H,profile))}catch(e){reject(e)}},0)})}
- const id=++taskNumber;
- return new Promise((resolve,reject)=>{taskWait.set(id,{resolve,reject});worker.postMessage({id,data:pixels.data.buffer,width:W,height:H,profile},[pixels.data.buffer])});
+function setCameraZoom(v){camZoom=Math.max(1,Math.min(5,Math.round(Number(v)*10)/10));$('camRange').value=String(camZoom);$('camValue').textContent=camZoom.toFixed(1).replace('.',',')+'×';video.style.transform='scale('+camZoom+')'}
+function cameraShot(){
+ if(!video.videoWidth)return null;
+ const cw=video.videoWidth/chosenCamZoom(),ch=video.videoHeight/chosenCamZoom(),sx=(video.videoWidth-cw)/2,sy=(video.videoHeight-ch)/2;
+ const factor=Math.min(1,1700/Math.max(cw,ch));buffer.width=Math.max(1,Math.round(cw*factor));buffer.height=Math.max(1,Math.round(ch*factor));
+ bctx.drawImage(video,sx,sy,cw,ch,0,0,buffer.width,buffer.height);return buffer;
 }
-function resizeCanvas(){const r=viewer.getBoundingClientRect();canvas.width=Math.max(1,Math.round(r.width*devicePixelRatio));canvas.height=Math.max(1,Math.round(r.height*devicePixelRatio))}
-function clearCanvas(){resizeCanvas();ctx.clearRect(0,0,canvas.width,canvas.height)}
-function stopCamera(){generation++;scanning=false;cancelAnimationFrame(frame);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}video.srcObject=null}
-async function startCamera(){
- stopCamera();image=null;locked=false;video.style.visibility='visible';clearCanvas();setStatus('Kamera wird geöffnet …');
- try{
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error('Kamera benötigt HTTPS bzw. localhost');
-  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});
-  video.srcObject=stream;await video.play();setCameraZoom(cameraZoom);setHint('Zoom einstellen, dann „Scan starten“ drücken');setStatus('Kamera bereit · '+VERSION);
- }catch(err){setHint('Kamera nicht verfügbar: '+err.message);setStatus('Kamerafehler · '+VERSION)}
-}
-function setCameraZoom(next){
- cameraZoom=Math.max(1,Math.min(5,Math.round(Number(next)*10)/10));
- $('camZoom').value=String(cameraZoom);
- $('camZoomVal').textContent=cameraZoom.toFixed(1).replace('.',',')+'×';
- // Digital zoom is always available: CSS preview and decoder use the same central region.
- video.style.transform='scale('+cameraZoom+')';
- video.style.transformOrigin='center center';
-}
-function cameraCapture(){
- if(!video.videoWidth||!video.videoHeight)return null;
- const sw=video.videoWidth/cameraZoom, sh=video.videoHeight/cameraZoom;
- const sx=(video.videoWidth-sw)/2, sy=(video.videoHeight-sh)/2;
- // Keep native pixel detail for distant codes, instead of enlarging low-res previews.
- const factor=Math.min(1,1600/Math.max(sw,sh));
- workCanvas.width=Math.max(1,Math.round(sw*factor));workCanvas.height=Math.max(1,Math.round(sh*factor));
- workCtx.imageSmoothingEnabled=true;
- workCtx.drawImage(video,sx,sy,sw,sh,0,0,workCanvas.width,workCanvas.height);return workCanvas;
-}
-function imageCoords(){
- if(!image)return null;
- const w=canvas.width,h=canvas.height,scale=Math.min(w/image.width,h/image.height)*zoom;
- const l=(w-image.width*scale)/2+panX,t=(h-image.height*scale)/2+panY;
- const sx=Math.max(0,-l/scale),sy=Math.max(0,-t/scale);
- const ex=Math.min(image.width,(w-l)/scale),ey=Math.min(image.height,(h-t)/scale);
- if(ex<=sx||ey<=sy)return null;
- return {sx,sy,w:ex-sx,h:ey-sy,scale,l,t};
-}
-function imageCapture(whole=false){
- if(!image)return null;
- const c=whole?{sx:0,sy:0,w:image.width,h:image.height}:imageCoords();if(!c)return null;
- const factor=Math.min(1,2400/Math.max(c.w,c.h));
- workCanvas.width=Math.max(1,Math.round(c.w*factor));workCanvas.height=Math.max(1,Math.round(c.h*factor));
- workCtx.imageSmoothingEnabled=true;
- workCtx.drawImage(image,c.sx,c.sy,c.w,c.h,0,0,workCanvas.width,workCanvas.height);
- return workCanvas;
-}
-function drawImagePreview(){clearCanvas();if(!image)return;const c=imageCoords();if(!c)return;ctx.drawImage(image,c.l,c.t,image.width*c.scale,image.height*c.scale)}
+function chosenCamZoom(){return camZoom}
 function freezeCamera(){
- if(!stream)return;
- const shot=cameraCapture();if(!shot)return;
- resizeCanvas();ctx.fillStyle='#050910';ctx.fillRect(0,0,canvas.width,canvas.height);
- const s=Math.min(canvas.width/shot.width,canvas.height/shot.height),dw=shot.width*s,dh=shot.height*s;
- ctx.drawImage(shot,(canvas.width-dw)/2,(canvas.height-dh)/2,dw,dh);
+ const s=cameraShot();if(s){sizePreview();ctx.clearRect(0,0,canvas.width,canvas.height);const fit=Math.min(canvas.width/s.width,canvas.height/s.height),w=s.width*fit,h=s.height*fit;ctx.drawImage(s,(canvas.width-w)/2,(canvas.height-h)/2,w,h)}
  video.style.visibility='hidden';stopCamera();
 }
-function saveResult(res){
- if(!res||!res.value)return;
- seq++;records.push({id:seq,time:new Date().toLocaleString('de-DE'),value:res.value.replace(/[\r\n]+$/g,''),format:res.format,note:''});
- records=records.slice(-10);persist();renderHistory();$('results').style.display='none';setHint('Erkannt und gespeichert. Für nächsten Scan „Weiter“ drücken.');setStatus('Code gespeichert · '+VERSION);
-}
-function showMatches(matches){
- const panel=$('results');panel.replaceChildren();panel.style.display='none';
- if(!matches.length){setHint(mode==='image'?'Kein Code gefunden. Bitte direkt auf den Code im Foto tippen oder Ausschnitt vergrößern.':'Kein Code gefunden. Kamera-Zoom erhöhen, ruhig halten und gutes Licht nutzen.');return}
- if(matches.length===1){saveResult(matches[0]);return}
- panel.style.display='block';setHint(matches.length+' Codes erkannt – gewünschten Eintrag auswählen');
- matches.forEach((result,i)=>{const button=document.createElement('button');button.textContent=(i+1)+'. '+result.format+': '+result.value.slice(0,110);button.onclick=()=>saveResult(result);panel.append(button)});
-}
-async function cameraLoop(now=0){
+async function cameraLoop(now){
  if(!scanning||locked||mode!=='camera')return;
- if(workerBusy||now-previousFrame<450){frame=requestAnimationFrame(cameraLoop);return}
- const shot=cameraCapture();if(!shot){frame=requestAnimationFrame(cameraLoop);return}
- previousFrame=now;workerBusy=true;const myGeneration=generation;
+ if(job||now-lastFrame<430){raf=requestAnimationFrame(cameraLoop);return}
+ const s=cameraShot();if(!s){raf=requestAnimationFrame(cameraLoop);return}
+ lastFrame=now;const token=epoch;
  try{
-  const r=await decodeCurrent(shot,'camera-'+(cameraScanCount++%12));
-  if(myGeneration!==generation||!scanning||mode!=='camera')return;
-  if(r.results.length){locked=true;freezeCamera();setStatus(r.results.length+' Code(s) erkannt · '+VERSION);showMatches(r.results);return}
-  setStatus('Suche läuft · '+r.tries+' Prüfungen · '+VERSION);
- }catch(err){setStatus('Erkennungsfehler · '+VERSION);setHint(err.message);scanning=false}
- finally{workerBusy=false}
- if(scanning)frame=requestAnimationFrame(cameraLoop);
+  const r=await decode(s,'camera-'+(frameCount++%12));
+  if(token!==epoch||!scanning||mode!=='camera')return;
+  if(r.results?.length){locked=true;freezeCamera();showResults(r.results);return}
+  status('Suche läuft · V1.0');
+ }catch(e){if(token===epoch){hint(e.message);scanning=false}}
+ if(scanning)raf=requestAnimationFrame(cameraLoop);
 }
-async function scanImage(whole){
- if(!image||workerBusy)return;
- const source=imageCapture(whole);if(!source){setHint('Ungültiger Bildausschnitt');return}
- workerBusy=true;setBusy(true);const myGeneration=generation;
- setStatus('Prüfe '+source.width+'×'+source.height+' · '+VERSION);
+function fitPhoto(){
+ if(!photo)return null;sizePreview();const W=canvas.width,H=canvas.height;
+ const scale=Math.min(W/photo.width,H/photo.height)*photoZoom;
+ return {scale,l:(W-photo.width*scale)/2+panX,t:(H-photo.height*scale)/2+panY,W,H};
+}
+function drawPhoto(){
+ if(mode!=='photo')return;clearPreview();if(!photo)return;
+ const q=fitPhoto();ctx.drawImage(photo,q.l,q.t,photo.width*q.scale,photo.height*q.scale);
+}
+function makeCrop(sx,sy,w,h,max=2200){
+ const scale=Math.min(1,max/Math.max(w,h));
+ buffer.width=Math.max(1,Math.round(w*scale));buffer.height=Math.max(1,Math.round(h*scale));
+ bctx.imageSmoothingEnabled=true;bctx.clearRect(0,0,buffer.width,buffer.height);
+ bctx.drawImage(photo,sx,sy,w,h,0,0,buffer.width,buffer.height);return buffer;
+}
+function capturePhoto(whole){
+ if(!photo)return null;
+ if(whole)return makeCrop(0,0,photo.width,photo.height,2300);
+ const q=fitPhoto();
+ const x=Math.max(0,-q.l/q.scale),y=Math.max(0,-q.t/q.scale);
+ const x2=Math.min(photo.width,(q.W-q.l)/q.scale),y2=Math.min(photo.height,(q.H-q.t)/q.scale);
+ if(x2<=x||y2<=y)return null;
+ return makeCrop(x,y,x2-x,y2-y,2600);
+}
+async function scanPhoto(whole,automatic=false){
+ if(!photo||mode!=='photo')return;
+ if(job){if(automatic)return;abortDecode()}
+ const src=capturePhoto(whole);if(!src)return;
+ const token=epoch;
+ status('Suche im '+(whole?'Foto':'Ausschnitt')+' …');hint('Erkennung läuft, du kannst den Code auch direkt antippen.');
  try{
-  const r=await decodeCurrent(source,'image');
-  if(myGeneration!==generation||mode!=='image')return;
-  setStatus(r.results.length?r.results.length+' Code(s) erkannt · '+VERSION:'Kein Code · '+r.tries+' Prüfungen · '+VERSION);
-  showMatches(r.results);
- }catch(err){setStatus('Scanfehler · '+VERSION);setHint(err.message)}
- finally{workerBusy=false;setBusy(false)}
+  const r=await decode(src,'photo-fast');if(token!==epoch||mode!=='photo')return;
+  if(showResults(r.results))return;
+  status('Kein Code gefunden · V1.0');hint('Code im Foto antippen oder hineinzoomen und „Ausschnitt“ wählen.');
+ }catch(e){if(token===epoch){status('Bildfehler · V1.0');hint(e.message)}}
 }
-function switchMode(next){
- stopCamera();mode=next;locked=false;image=null;zoom=1;panX=panY=0;
- imageToken++;$('results').style.display='none';$('results').replaceChildren();
- $('cameraMode').classList.toggle('selected',next==='camera');$('imageMode').classList.toggle('selected',next==='image');
- $('cameraZoomBar').hidden=next!=='camera';
- for(const id of ['openCamera','scan','reset'])$(id).hidden=next!=='camera';
- for(const id of ['chooseImage','scanWhole','analyze','zoomOut','zoomIn','resetZoom'])$(id).hidden=next!=='image';
- video.style.display=next==='camera'?'block':'none';clearCanvas();
- setHint(next==='camera'?'Kamera einschalten, bei Bedarf zoomen, dann Scan starten':'Foto laden – automatische Suche oder auf den Code tippen');
- setStatus('Erkennung bereit · '+VERSION);
+function photoPoint(px,py){
+ const q=fitPhoto(),rect=canvas.getBoundingClientRect();
+ const x=(px-rect.left)*canvas.width/rect.width,y=(py-rect.top)*canvas.height/rect.height;
+ return {x:(x-q.l)/q.scale,y:(y-q.t)/q.scale,cx:x,cy:y};
 }
-$('camZoom').addEventListener('input',e=>setCameraZoom(e.target.value));
-$('camZoomMinus').onclick=()=>setCameraZoom(cameraZoom-.5);
-$('camZoomPlus').onclick=()=>setCameraZoom(cameraZoom+.5);
-$('cameraMode').onclick=()=>switchMode('camera');$('imageMode').onclick=()=>switchMode('image');
-$('openCamera').onclick=startCamera;
-$('scan').onclick=async()=>{
- if(!stream)await startCamera();if(!stream||scanning)return;
- locked=false;scanning=true;previousFrame=0;setHint('Suche läuft – Code möglichst groß und scharf ins Bild halten');frame=requestAnimationFrame(cameraLoop);
-};
-$('reset').onclick=async()=>{await startCamera()};
-$('chooseImage').onclick=()=>$('file').click();
-// For a tiny symbol in a large photo, tap its center to examine local regions.
-async function scanImageAt(clientX,clientY){
- if(!image||mode!=='image'||workerBusy)return;
- const rect=canvas.getBoundingClientRect();const c=imageCoords();if(!c)return;
- const bx=(clientX-rect.left)*canvas.width/rect.width,by=(clientY-rect.top)*canvas.height/rect.height;
- const centerX=(bx-c.l)/c.scale,centerY=(by-c.t)/c.scale;
- if(centerX<0||centerY<0||centerX>image.width||centerY>image.height)return;
- workerBusy=true;setBusy(true);const myGeneration=generation;
- setStatus('Prüfe angetippten Bereich · '+VERSION);
+function focusAt(x,y){const q=$('focus'),r=canvas.getBoundingClientRect();q.style.left=(x/canvas.width*100)+'%';q.style.top=(y/canvas.height*100)+'%';q.classList.add('on')}
+async function scanAt(px,py){
+ if(!photo||mode!=='photo')return;
+ const p=photoPoint(px,py);if(p.x<0||p.y<0||p.x>photo.width||p.y>photo.height)return;
+ abortDecode();const token=epoch;hideMatches();focusAt(p.cx,p.cy);
+ status('Untersuche angetippte Stelle …');hint('Suche direkt am markierten Bildbereich …');
+ const side=Math.min(photo.width,photo.height);
+ // Native-pixel crops are critical: never use the enlarged preview for decoding.
+ const sizes=[90,145,230,360,Math.max(480,side*.24),Math.max(700,side*.46),Math.max(1000,side*.78)];
+ let total=0;
+ for(const wanted of [...new Set(sizes.map(s=>Math.round(s)))]){
+  if(token!==epoch||mode!=='photo')return;
+  const w=Math.min(photo.width,wanted),h=Math.min(photo.height,wanted);
+  const sx=Math.max(0,Math.min(photo.width-w,Math.round(p.x-w/2))),sy=Math.max(0,Math.min(photo.height-h,Math.round(p.y-h/2)));
+  const src=makeCrop(sx,sy,w,h,2000);
+  try{
+   const r=await decode(src,'photo-target');if(token!==epoch)return;
+   total+=r.tries||0;
+   if(showResults(r.results)){$('focus').classList.remove('on');return}
+  }catch(e){if(token!==epoch)return;hint(e.message);break}
+ }
+ if(token!==epoch)return;
+ status('Am Punkt kein Code · V1.0');hint('Noch kein Treffer. Bitte Bild vergrößern und genauer auf den Code tippen.');
+ // Zoom around the tapped source point so a second tap can be more precise.
+ if(photoZoom<2.2)setPhotoZoom(2.5,p.x,p.y);
+}
+function clampPan(){if(!photo)return;const w=canvas.width,h=canvas.height,base=Math.min(w/photo.width,h/photo.height)*photoZoom;
+ const pw=photo.width*base,ph=photo.height*base;
+ const mx=Math.max(0,(pw-w)/2+30),my=Math.max(0,(ph-h)/2+30);
+ panX=Math.max(-mx,Math.min(mx,panX));panY=Math.max(-my,Math.min(my,panY));
+}
+function setPhotoZoom(v,anchorX,anchorY){
+ if(!photo)return;
+ const old=fitPhoto(),x=Number.isFinite(anchorX)?anchorX:photo.width/2,y=Number.isFinite(anchorY)?anchorY:photo.height/2;
+ const locX=old.l+x*old.scale,locY=old.t+y*old.scale;
+ photoZoom=Math.max(1,Math.min(12,Number(v)));
+ const base=Math.min(canvas.width/photo.width,canvas.height/photo.height)*photoZoom;
+ panX=locX-(canvas.width-photo.width*base)/2-x*base;
+ panY=locY-(canvas.height-photo.height*base)/2-y*base;
+ clampPan();$('photoRange').value=String(photoZoom);$('photoValue').textContent=photoZoom.toFixed(1).replace('.',',')+'×';drawPhoto();
+}
+async function pickPhoto(file){
+ if(!file)return;abortDecode();hideMatches();$('focus').classList.remove('on');
+ const loadId=++photoLoadToken;const old=photo;photo=null;
+ if(old&&typeof old.close==='function')old.close();
+ clearPreview();status('Bild wird geöffnet …');
  try{
-  let count=0;
-  const side=Math.min(image.width,image.height);
-  const sizes=[Math.max(65,side*.09),Math.max(110,side*.17),Math.max(200,side*.32),Math.max(350,side*.58)];
-  for(const wanted of sizes){
-   if(myGeneration!==generation||mode!=='image')return;
-   const w=Math.min(image.width,Math.round(wanted)),h=Math.min(image.height,Math.round(wanted));
-   const sx=Math.max(0,Math.min(image.width-w,Math.round(centerX-w/2)));
-   const sy=Math.max(0,Math.min(image.height-h,Math.round(centerY-h/2)));
-   const tmp=document.createElement('canvas');tmp.width=w;tmp.height=h;
-   tmp.getContext('2d',{willReadFrequently:true}).drawImage(image,sx,sy,w,h,0,0,w,h);
-   const found=await decodeCurrent(tmp,'image');count+=found.tries;
-   if(found.results.length){setStatus(found.results.length+' Code(s) erkannt · '+VERSION);showMatches(found.results);return}
+  let nextPhoto;
+  if(window.createImageBitmap){nextPhoto=await createImageBitmap(file)}else{
+   const url=URL.createObjectURL(file);try{nextPhoto=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=url})}finally{URL.revokeObjectURL(url)}
   }
-  setStatus('Kein Code am Punkt · '+count+' Prüfungen · '+VERSION);
-  setHint('Noch nicht erkannt: näher auf den Code tippen oder Foto vergrößern und „Ausschnitt scannen“ wählen.');
- }catch(err){setStatus('Bildfehler · '+VERSION);setHint(err.message)}
- finally{workerBusy=false;setBusy(false)}
+  if(mode!=='photo'||loadId!==photoLoadToken){if(typeof nextPhoto.close==='function')nextPhoto.close();return}
+  photo=nextPhoto;
+  photoZoom=1;panX=0;panY=0;drawPhoto();status('Foto '+photo.width+'×'+photo.height+' · V1.0');
+  hint('Automatische Suche startet. Du kannst jederzeit den Code antippen.');
+  scanPhoto(true,true);
+ }catch(e){status('Fotofehler');hint('Bild konnte nicht geöffnet werden: '+e.message)}
 }
-$('file').onchange=async e=>{
- const f=e.target.files?.[0];if(!f)return;
- generation++;setStatus('Lade Foto …');
- try{
-  if(image&&typeof image.close==='function')image.close();
-  if(typeof createImageBitmap==='function')image=await createImageBitmap(f);
-  else{
-   const url=URL.createObjectURL(f);
-   try{image=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=url})}
-   finally{URL.revokeObjectURL(url)}
-  }
-  zoom=1;panX=panY=0;drawImagePreview();setStatus('Foto '+image.width+'×'+image.height+' · '+VERSION);
-  setHint('Automatische Suche startet. Wenn erfolglos: direkt auf den Code im Foto tippen.');
-  const thisToken=++imageToken;
-  setTimeout(()=>{if(thisToken===imageToken&&image&&mode==='image'&&!workerBusy)scanImage(true)},120);
- }catch(err){setHint('Foto konnte nicht geöffnet werden: '+err.message);setStatus('Bildfehler · '+VERSION)}
- e.target.value='';
+function setMode(next){
+ abortDecode();stopCamera();locked=false;mode=next;photoLoadToken++;if(photo&&typeof photo.close==='function')photo.close();photo=null;photoZoom=1;panX=panY=0;points.clear();origins.clear();$('focus').classList.remove('on');hideMatches();
+ $('tabCamera').classList.toggle('selected',next==='camera');$('tabPhoto').classList.toggle('selected',next==='photo');
+ $('cameraControls').hidden=next!=='camera';$('photoControls').hidden=next!=='photo';$('zoomCamera').hidden=next!=='camera';$('zoomPhoto').hidden=next!=='photo';
+ viewer.classList.toggle('photo',next==='photo');video.style.display=next==='camera'?'block':'none';video.style.visibility='visible';clearPreview();
+ hint(next==='camera'?'Kamera einschalten und „Scan starten“ drücken':'Foto öffnen. Zum Suchen auf den Code tippen oder vergrößern.');status('ZXing bereit · V1.0');
+}
+$('tabCamera').onclick=()=>setMode('camera');$('tabPhoto').onclick=()=>setMode('photo');
+$('cameraOn').onclick=openCamera;
+$('startScan').onclick=async()=>{
+ if(!cameraStream)await openCamera();if(!cameraStream||scanning)return;
+ scanning=true;locked=false;lastFrame=0;hint('Suche läuft. Den Code möglichst scharf ins Bild halten.');raf=requestAnimationFrame(cameraLoop);
 };
-$('scanWhole').onclick=()=>scanImage(true);$('analyze').onclick=()=>scanImage(false);
-function setZoom(z){zoom=Math.max(1,Math.min(16,z));if(zoom===1){panX=0;panY=0}drawImagePreview()}
-$('zoomIn').onclick=()=>setZoom(zoom*1.7);$('zoomOut').onclick=()=>setZoom(zoom/1.7);$('resetZoom').onclick=()=>setZoom(1);
+$('nextScan').onclick=openCamera;
+$('cameraMinus').onclick=()=>setCameraZoom(camZoom-.5);$('cameraPlus').onclick=()=>setCameraZoom(camZoom+.5);$('camRange').oninput=e=>setCameraZoom(e.target.value);
+$('pickPhoto').onclick=()=>$('file').click();$('file').onchange=e=>{pickPhoto(e.target.files?.[0]);e.target.value=''};
+$('scanWhole').onclick=()=>scanPhoto(true);$('scanCrop').onclick=()=>scanPhoto(false);
+$('photoMinus').onclick=()=>setPhotoZoom(photoZoom/1.6);$('photoPlus').onclick=()=>setPhotoZoom(photoZoom*1.6);$('photoRange').oninput=e=>setPhotoZoom(e.target.value);
+$('clearHistory').onclick=()=>{if(records.length&&confirm('Alle zehn bzw. alle vorhandenen Scans löschen?')){records=[];persist();render()}};
 canvas.addEventListener('pointerdown',e=>{
- if(mode!=='image'||!image)return;
- canvas.setPointerCapture(e.pointerId);gesture.set(e.pointerId,{x:e.clientX,y:e.clientY});pointerOrigin.set(e.pointerId,{x:e.clientX,y:e.clientY,moved:false});
+ if(mode!=='photo'||!photo)return;
+ e.preventDefault();canvas.setPointerCapture(e.pointerId);points.set(e.pointerId,{x:e.clientX,y:e.clientY});origins.set(e.pointerId,{x:e.clientX,y:e.clientY,moved:false});
 });
 canvas.addEventListener('pointermove',e=>{
- if(mode!=='image'||!image||!gesture.has(e.pointerId))return;
- const p=gesture.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;
- gesture.set(e.pointerId,{x:e.clientX,y:e.clientY});
- const start=pointerOrigin.get(e.pointerId);if(start&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>9)start.moved=true;
- if(gesture.size===1){panX+=dx*devicePixelRatio;panY+=dy*devicePixelRatio;drawImagePreview()}
- else if(gesture.size===2){const [a,b]=[...gesture.values()],dist=Math.hypot(a.x-b.x,a.y-b.y);if(lastPinch>0)setZoom(zoom*dist/lastPinch);lastPinch=dist}
+ if(!points.has(e.pointerId)||mode!=='photo'||!photo)return;
+ e.preventDefault();const p=points.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;points.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ const orig=origins.get(e.pointerId);if(orig&&Math.hypot(e.clientX-orig.x,e.clientY-orig.y)>8)orig.moved=true;
+ if(points.size===1){const rect=canvas.getBoundingClientRect();panX+=dx*canvas.width/rect.width;panY+=dy*canvas.height/rect.height;clampPan();drawPhoto()}
+ else if(points.size===2){const arr=[...points.values()],gap=Math.hypot(arr[0].x-arr[1].x,arr[0].y-arr[1].y);if(lastGap>0){setPhotoZoom(photoZoom*gap/lastGap);for(const o of origins.values())o.moved=true}lastGap=gap}
 });
-for(const name of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(name,e=>{
- const origin=pointerOrigin.get(e.pointerId);const tap=name==='pointerup'&&origin&&!origin.moved&&gesture.size===1;
- gesture.delete(e.pointerId);pointerOrigin.delete(e.pointerId);if(gesture.size<2)lastPinch=0;
- if(tap)scanImageAt(e.clientX,e.clientY);
+for(const t of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(t,e=>{
+ const orig=origins.get(e.pointerId);const tap=t==='pointerup'&&orig&&!orig.moved&&points.size===1;
+ points.delete(e.pointerId);origins.delete(e.pointerId);if(points.size<2)lastGap=0;
+ if(tap)scanAt(e.clientX,e.clientY);
 });
-canvas.addEventListener('wheel',e=>{if(mode!=='image')return;e.preventDefault();setZoom(zoom*(e.deltaY<0?1.25:.8))},{passive:false});
-$('clear').onclick=()=>{if(records.length&&confirm('Alle gespeicherten Scans löschen?')){records=[];persist();renderHistory()}};
-window.addEventListener('resize',()=>{if(mode==='image')drawImagePreview();else if(!stream)clearCanvas()});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream){stopCamera();setHint('Kamera gestoppt – für nächsten Scan erneut einschalten')}});
-if('serviceWorker' in navigator&&location.protocol!=='file:'){
- const key='qr-v09-updated';let had=!!navigator.serviceWorker.controller;
- navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!sessionStorage.getItem(key)){sessionStorage.setItem(key,'yes');location.reload()}});
- navigator.serviceWorker.register('./sw.js?v=0.9',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
+canvas.addEventListener('wheel',e=>{if(mode==='photo'&&photo){e.preventDefault();setPhotoZoom(photoZoom*(e.deltaY<0?1.25:.8))}},{passive:false});
+window.addEventListener('resize',()=>{if(mode==='photo')drawPhoto();else if(!cameraStream)clearPreview()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&cameraStream){stopCamera();hint('Kamera gestoppt. Erneut einschalten.')}});
+if('serviceWorker'in navigator&&location.protocol!=='file:'){
+ const key='qr-v10-updated';let previouslyControlled=!!navigator.serviceWorker.controller;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(previouslyControlled&&!sessionStorage.getItem(key)){sessionStorage.setItem(key,'yes');location.reload()}});
+ navigator.serviceWorker.register('./sw.js?v=1.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
 }
-setCameraZoom(1);setStatus(typeof ScannerEngine==='object'?'ZXing bereit · '+VERSION:'Decoder fehlt · '+VERSION);
+setCameraZoom(1);status(typeof ScannerEngine==='object'?'ZXing bereit · V1.0':'Decoder fehlt · V1.0');
 </script>
-</body></html>
+</body>
+</html>

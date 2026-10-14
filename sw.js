@@ -1,23 +1,12 @@
-const CACHE='qr-offline-v0.9';
+const CACHE='qr-offline-v1.0';
 const ASSETS=['./index.html','./zxing.min.js','./scanner-engine.js','./scan-worker.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./icon-1024.png'];
-self.addEventListener('install',event=>{
- event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
-});
-self.addEventListener('activate',event=>{
- event.waitUntil(Promise.all([
-  caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('qr-offline-')&&key!==CACHE).map(key=>caches.delete(key)))),
-  self.clients.claim()
- ]));
-});
-self.addEventListener('fetch',event=>{
- const req=event.request;
- if(req.method!=='GET'||new URL(req.url).origin!==self.location.origin)return;
+self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('qr-offline-')&&k!==CACHE).map(k=>caches.delete(k)))),self.clients.claim()])));
+self.addEventListener('fetch',e=>{
+ const req=e.request;if(req.method!=='GET'||new URL(req.url).origin!==self.location.origin)return;
  if(req.mode==='navigate'){
-  event.respondWith(fetch(req,{cache:'no-store'}).then(response=>{
-   if(response.ok){const copy=response.clone();event.waitUntil(caches.open(CACHE).then(cache=>cache.put('./index.html',copy)))}
-   return response;
-  }).catch(()=>caches.match('./index.html')));
-  return;
+  e.respondWith(fetch(req,{cache:'no-store'}).then(r=>{if(r.ok){const copy=r.clone();e.waitUntil(caches.open(CACHE).then(c=>c.put('./index.html',copy)))}return r}).catch(()=>caches.match('./index.html')));
+ }else{
+  e.respondWith(caches.match(req,{ignoreSearch:true}).then(r=>r||fetch(req)));
  }
- event.respondWith(caches.match(req,{ignoreSearch:true}).then(cached=>cached||fetch(req)));
 });

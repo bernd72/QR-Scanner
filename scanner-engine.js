@@ -76,7 +76,7 @@
     const camera = String(profile).startsWith('camera');
     const phase = camera ? (Number(String(profile).split('-')[1]) || 0) % 12 : 0;
     // Image: full native data first; Camera: brief work per frame to stay responsive.
-    const maxAttempts = camera ? 48 : 1750;
+    const maxAttempts = camera ? 48 : profile === 'photo-target' ? 160 : 1750;
     function probe(x, y, w, h, extra = false) {
       if (tries >= maxAttempts || results.length >= 10 || w < 24 || h < 24) return;
       const scale = Math.min(1, 2000 / Math.max(w, h));
