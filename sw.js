@@ -1,4 +1,4 @@
-const CACHE='qr-offline-v0.8';
+const CACHE='qr-offline-v0.9';
 const ASSETS=['./index.html','./zxing.min.js','./scanner-engine.js','./scan-worker.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./icon-1024.png'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));

@@ -76,7 +76,7 @@
     const camera = String(profile).startsWith('camera');
     const phase = camera ? (Number(String(profile).split('-')[1]) || 0) % 12 : 0;
     // Image: full native data first; Camera: brief work per frame to stay responsive.
-    const maxAttempts = camera ? 46 : 1400;
+    const maxAttempts = camera ? 48 : 1750;
     function probe(x, y, w, h, extra = false) {
       if (tries >= maxAttempts || results.length >= 10 || w < 24 || h < 24) return;
       const scale = Math.min(1, 2000 / Math.max(w, h));
@@ -126,7 +126,7 @@
         probe(x,y,side,side,false);
       }
     } else {
-      const sizes = [0.9, 0.55, 0.33, 0.20, 0.12].map(f => Math.min(W,H) * f);
+      const sizes = [0.20, 0.12, 0.33, 0.55, 0.9].map(f => Math.min(W,H) * f);
       for (const s0 of sizes) {
         if (tries >= maxAttempts || results.length >= 10) break;
         const side = Math.max(75, Math.round(s0));
